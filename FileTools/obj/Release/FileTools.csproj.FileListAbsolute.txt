@@ -1,0 +1,13 @@
+C:\subversion-projects\csharp\filetools\FileTools\bin\Release\FileTools.exe.manifest
+C:\subversion-projects\csharp\filetools\FileTools\bin\Release\FileTools.application
+C:\subversion-projects\csharp\filetools\FileTools\bin\Release\FileTools.exe
+C:\subversion-projects\csharp\filetools\FileTools\bin\Release\FileTools.pdb
+C:\subversion-projects\csharp\filetools\FileTools\obj\Release\ResolveAssemblyReference.cache
+C:\subversion-projects\csharp\filetools\FileTools\obj\Release\FileTools.frmAbout.resources
+C:\subversion-projects\csharp\filetools\FileTools\obj\Release\FileTools.FileTools.resources
+C:\subversion-projects\csharp\filetools\FileTools\obj\Release\FileTools.Properties.Resources.resources
+C:\subversion-projects\csharp\filetools\FileTools\obj\Release\FileTools.csproj.GenerateResource.Cache
+C:\subversion-projects\csharp\filetools\FileTools\obj\Release\FileTools.exe.manifest
+C:\subversion-projects\csharp\filetools\FileTools\obj\Release\FileTools.application
+C:\subversion-projects\csharp\filetools\FileTools\obj\Release\FileTools.exe
+C:\subversion-projects\csharp\filetools\FileTools\obj\Release\FileTools.pdb
