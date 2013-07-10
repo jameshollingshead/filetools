@@ -29,6 +29,8 @@ namespace FileTools
             rootNode.SelectedImageIndex = 6;
             this.fileTree.Nodes.Add(rootNode);
 
+            int driveType;
+
             //Add logical Drives to the tree
             DriveInfo[] drives = DriveInfo.GetDrives();
             foreach(DriveInfo d in drives)
@@ -39,32 +41,9 @@ namespace FileTools
                 n.Text = d.Name.ToString();
                 n.Tag = d.Name.ToString();
 
-                //Determine drive type and add appropriate icon to tree node
-                if (d.DriveType == DriveType.CDRom)
-                {
-                    n.ImageIndex = 1;
-                    n.SelectedImageIndex = 1;
-                }
-                else if (d.DriveType == DriveType.Fixed)
-                {
-                    n.ImageIndex = 0;
-                    n.SelectedImageIndex = 0;
-                }
-                else if (d.DriveType == DriveType.Network)
-                {
-                    n.ImageIndex = 4;
-                    n.SelectedImageIndex = 4;
-                }
-                else if (d.DriveType == DriveType.Removable)
-                {
-                    n.ImageIndex = 2;
-                    n.SelectedImageIndex = 2;
-                }
-                else
-                {
-                    n.ImageIndex = 5;
-                    n.SelectedImageIndex = 5;
-                }
+                driveType = GetDriveType(d);
+                n.ImageIndex = driveType;
+                n.SelectedImageIndex = driveType;
 
                 
                 DirectoryInfo folder = new DirectoryInfo(d.Name.ToString());
@@ -85,6 +64,36 @@ namespace FileTools
             }
 
             fileTree.Nodes[0].Expand();
+        }
+
+        private static int GetDriveType(DriveInfo d)
+        {
+            int driveType;
+
+            //Determine drive type and add appropriate icon to tree node
+            if (d.DriveType == DriveType.Fixed)
+            {
+                driveType = 0;                
+            }
+
+            else if (d.DriveType == DriveType.CDRom)
+            {
+                driveType = 1;
+            }
+            else if (d.DriveType == DriveType.Removable)
+            {
+                driveType = 2;
+            }
+            else if (d.DriveType == DriveType.Network)
+            {
+                driveType = 4;
+            }
+            else
+            {
+                driveType = 5;
+            }
+
+            return driveType;
         }
 
         
