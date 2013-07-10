@@ -11,3 +11,17 @@ C:\subversion-projects\csharp\filetools\FileTools\obj\Release\FileTools.exe.mani
 C:\subversion-projects\csharp\filetools\FileTools\obj\Release\FileTools.application
 C:\subversion-projects\csharp\filetools\FileTools\obj\Release\FileTools.exe
 C:\subversion-projects\csharp\filetools\FileTools\obj\Release\FileTools.pdb
+C:\Code\Github\C_Sharp\FileTools-C_sharp\filetools\FileTools\bin\Release\FileTools.exe.manifest
+C:\Code\Github\C_Sharp\FileTools-C_sharp\filetools\FileTools\bin\Release\FileTools.application
+C:\Code\Github\C_Sharp\FileTools-C_sharp\filetools\FileTools\bin\Release\FileTools.exe
+C:\Code\Github\C_Sharp\FileTools-C_sharp\filetools\FileTools\bin\Release\FileTools.pdb
+C:\Code\Github\C_Sharp\FileTools-C_sharp\filetools\FileTools\obj\Release\ResolveAssemblyReference.cache
+C:\Code\Github\C_Sharp\FileTools-C_sharp\filetools\FileTools\obj\Release\FileTools.frmAbout.resources
+C:\Code\Github\C_Sharp\FileTools-C_sharp\filetools\FileTools\obj\Release\FileTools.FileTools.resources
+C:\Code\Github\C_Sharp\FileTools-C_sharp\filetools\FileTools\obj\Release\FileTools.Properties.Resources.resources
+C:\Code\Github\C_Sharp\FileTools-C_sharp\filetools\FileTools\obj\Release\ResGen.read.1.tlog
+C:\Code\Github\C_Sharp\FileTools-C_sharp\filetools\FileTools\obj\Release\ResGen.write.1.tlog
+C:\Code\Github\C_Sharp\FileTools-C_sharp\filetools\FileTools\obj\Release\FileTools.exe.manifest
+C:\Code\Github\C_Sharp\FileTools-C_sharp\filetools\FileTools\obj\Release\FileTools.application
+C:\Code\Github\C_Sharp\FileTools-C_sharp\filetools\FileTools\obj\Release\FileTools.exe
+C:\Code\Github\C_Sharp\FileTools-C_sharp\filetools\FileTools\obj\Release\FileTools.pdb
