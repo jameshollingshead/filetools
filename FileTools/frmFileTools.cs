@@ -18,6 +18,8 @@ namespace FileTools
 {
     public partial class FileTools : Form
     {
+        enum driveTypes {FixedDrive, CDRom, Removeable, MissingValue, Network, Other};
+
         public FileTools()
         {
             InitializeComponent();
@@ -68,29 +70,29 @@ namespace FileTools
 
         private static int GetDriveType(DriveInfo d)
         {
-            int driveType;
 
+            int driveType;
+            
             //Determine drive type and add appropriate icon to tree node
             if (d.DriveType == DriveType.Fixed)
             {
-                driveType = 0;                
+                driveType = (int)driveTypes.FixedDrive;                
             }
-
             else if (d.DriveType == DriveType.CDRom)
             {
-                driveType = 1;
+                driveType = (int)driveTypes.CDRom;
             }
             else if (d.DriveType == DriveType.Removable)
             {
-                driveType = 2;
+                driveType = (int)driveTypes.Removeable;
             }
             else if (d.DriveType == DriveType.Network)
             {
-                driveType = 4;
+                driveType = (int)driveTypes.Network;
             }
             else
             {
-                driveType = 5;
+                driveType = (int)driveTypes.Other;
             }
 
             return driveType;
