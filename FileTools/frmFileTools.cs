@@ -24,12 +24,7 @@ namespace FileTools
         {
             InitializeComponent();
 
-            TreeNode rootNode = new TreeNode();
-            rootNode.Name = "rootNode";
-            rootNode.Text = "My Computer";
-            rootNode.ImageIndex = (int)driveTypes.MyComputer;
-            rootNode.SelectedImageIndex = (int)driveTypes.MyComputer;
-            this.fileTree.Nodes.Add(rootNode);
+            CreateRootNode();
 
             int driveType;
 
@@ -67,6 +62,17 @@ namespace FileTools
             }
 
             fileTree.Nodes[0].Expand();
+        }
+
+        private void CreateRootNode()
+        {
+            //Create root node (MyComputer) for file tree and add it to the file tree
+            TreeNode rootNode = new TreeNode();
+            rootNode.Name = "rootNode";
+            rootNode.Text = "My Computer";
+            rootNode.ImageIndex = (int)driveTypes.MyComputer;
+            rootNode.SelectedImageIndex = (int)driveTypes.MyComputer;
+            this.fileTree.Nodes.Add(rootNode);
         }
 
         private static int GetDriveType(DriveInfo d)
