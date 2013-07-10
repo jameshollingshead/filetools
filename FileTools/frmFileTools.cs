@@ -18,7 +18,7 @@ namespace FileTools
 {
     public partial class FileTools : Form
     {
-        enum driveTypes {FixedDrive, CDRom, Removeable, MissingValue, Network, Other};
+        enum driveTypes {FixedDrive, CDRom, Removeable, FolderClosed, Network, Other, MyComputer, FolderOpen};
 
         public FileTools()
         {
@@ -27,8 +27,8 @@ namespace FileTools
             TreeNode rootNode = new TreeNode();
             rootNode.Name = "rootNode";
             rootNode.Text = "My Computer";
-            rootNode.ImageIndex = 6;
-            rootNode.SelectedImageIndex = 6;
+            rootNode.ImageIndex = (int)driveTypes.MyComputer;
+            rootNode.SelectedImageIndex = (int)driveTypes.MyComputer;
             this.fileTree.Nodes.Add(rootNode);
 
             int driveType;
@@ -43,6 +43,7 @@ namespace FileTools
                 n.Text = d.Name.ToString();
                 n.Tag = d.Name.ToString();
 
+                //Determine type of all attached drives and assign the appropriate images to the tree nodes
                 driveType = GetDriveType(d);
                 n.ImageIndex = driveType;
                 n.SelectedImageIndex = driveType;
@@ -138,8 +139,8 @@ namespace FileTools
                             string[] tokenPath = newSubs[k].Split(Path.DirectorySeparatorChar);
                             subNode.Text = tokenPath[tokenPath.Length-1];
                             subNode.Tag = newSubs[k];
-                            subNode.ImageIndex = 3;
-                            subNode.SelectedImageIndex = 7;
+                            subNode.ImageIndex = (int)driveTypes.FolderClosed;
+                            subNode.SelectedImageIndex = (int)driveTypes.FolderOpen;
 
                             DirectoryInfo folder = new DirectoryInfo(newSubs[k]);
                             if (folder.Exists)
