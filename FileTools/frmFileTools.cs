@@ -43,35 +43,7 @@ namespace FileTools
 
                 string[] newSubs = Directory.GetDirectories(pathInfo);
 
-                if (newSubs.Length > 0)
-                {
-                    for (int k = 0; k < newSubs.Length; k++)
-                    {
-                        //Only get the non-hidden folders and non-system folders
-                        //TODO: Find out why C:\PerfLogs denies access in Win7 or at least some flag 
-                        //that it uses so I don't have to have the string hard-coded into the program
-                        bool isHidden = ((File.GetAttributes(newSubs[k]) & FileAttributes.Hidden) == 
-                            FileAttributes.Hidden);
-                        bool isSystem = ((File.GetAttributes(newSubs[k]) & FileAttributes.System) ==
-                            FileAttributes.System);
-                        if(!isHidden && !newSubs[k].Contains("PerfLogs") && !isSystem)
-                        {
-
-                            TreeNode subNode = new TreeNode();
-                            subNode.Name = newSubs[k];
-                            string[] tokenPath = newSubs[k].Split(Path.DirectorySeparatorChar);
-                            subNode.Text = tokenPath[tokenPath.Length-1];
-                            subNode.Tag = newSubs[k];
-                            subNode.ImageIndex = (int)folderTypes.FolderClosed;
-                            subNode.SelectedImageIndex = (int)folderTypes.FolderOpen;
-
-                            AddPlaceholderForSubFolders(newSubs[k], subNode);
-
-                            e.Node.Nodes.Add(subNode);
-                        }
-
-                    }
-                }
+                AddSubFoldersToCurrentFolder(e, newSubs);
 
             }
         }
@@ -308,7 +280,40 @@ namespace FileTools
 
             return pathInfo;
         }
-             
+
+        private static void AddSubFoldersToCurrentFolder(TreeViewCancelEventArgs e, string[] newSubs)
+        {
+            if (newSubs.Length > 0)
+            {
+                for (int k = 0; k < newSubs.Length; k++)
+                {
+                    //Only get the non-hidden folders and non-system folders
+                    //TODO: Find out why C:\PerfLogs denies access in Win7 or at least some flag 
+                    //that it uses so I don't have to have the string hard-coded into the program
+                    bool isHidden = ((File.GetAttributes(newSubs[k]) & FileAttributes.Hidden) ==
+                        FileAttributes.Hidden);
+                    bool isSystem = ((File.GetAttributes(newSubs[k]) & FileAttributes.System) ==
+                        FileAttributes.System);
+                    if (!isHidden && !newSubs[k].Contains("PerfLogs") && !isSystem)
+                    {
+
+                        TreeNode subNode = new TreeNode();
+                        subNode.Name = newSubs[k];
+                        string[] tokenPath = newSubs[k].Split(Path.DirectorySeparatorChar);
+                        subNode.Text = tokenPath[tokenPath.Length - 1];
+                        subNode.Tag = newSubs[k];
+                        subNode.ImageIndex = (int)folderTypes.FolderClosed;
+                        subNode.SelectedImageIndex = (int)folderTypes.FolderOpen;
+
+                        AddPlaceholderForSubFolders(newSubs[k], subNode);
+
+                        e.Node.Nodes.Add(subNode);
+                    }
+
+                }
+            }
+        }
+     
         private static void AddPlaceholderForSubFolders(string currentFolder, TreeNode n)
         {
             DirectoryInfo folder = new DirectoryInfo(currentFolder);
