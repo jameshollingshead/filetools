@@ -192,51 +192,61 @@ namespace FileTools
             {
 
                 //Create the directories to sort the files into
-                try
-                {
-                    string dir = pathInfo + Path.DirectorySeparatorChar + "0-9";
-                    DirectoryInfo dirInfo = new DirectoryInfo(dir);
-                    if (!dirInfo.Exists)
-                    {
-                        Directory.CreateDirectory(dir);
-                    }
-                    for (char letter = 'A'; letter <= 'Z'; letter++)
-                    {
-                        dir = pathInfo + Path.DirectorySeparatorChar + letter.ToString();
-                        dirInfo = new DirectoryInfo(dir);
-                        if (!dirInfo.Exists)
-                        {
-                            Directory.CreateDirectory(dir);
-                        }
-                        Directory.CreateDirectory(dir);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error: " + ex.Message);
-                }
-
+                CreateLetterAndNumberDirectories(pathInfo);
+             
                 //Add a placeholder node to the tree so it can be expanded
                 fileTree.SelectedNode.Nodes.Add("PLACEHOLDER");
 
                 //Move the files into the appropriate directory
-                try
-                {
-                    //get the files
-                    string[] fileList = Directory.GetFiles(pathInfo);
+                SortFilesIntoDirectoriesByFirstCharacter(pathInfo);
+            }
+        }
 
-                    //Toss the files into directories
-                    for (int i = 0; i < fileList.Length; i++)
-                    {
-                        string[] fileName = fileList[i].Split(Path.DirectorySeparatorChar);
-                        string moveDir = pathInfo + Path.DirectorySeparatorChar + fileName[fileName.Length - 1].Substring(0, 1).ToUpper();
-                        HelperFuncs.MoveFiles(fileList[i], moveDir, fileName[fileName.Length - 1]);
-                    }
-                }
-                catch (Exception ex2)
+        private static void SortFilesIntoDirectoriesByFirstCharacter(string pathInfo)
+        {
+            try
+            {
+                //get the files
+                string[] fileList = Directory.GetFiles(pathInfo);
+
+                //Toss the files into directories
+                for (int i = 0; i < fileList.Length; i++)
                 {
-                    MessageBox.Show("Error: " + ex2.Message);
+                    string[] fileName = fileList[i].Split(Path.DirectorySeparatorChar);
+                    string moveDir = pathInfo + Path.DirectorySeparatorChar + fileName[fileName.Length - 1].Substring(0, 1).ToUpper();
+                    HelperFuncs.MoveFiles(fileList[i], moveDir, fileName[fileName.Length - 1]);
                 }
+            }
+            catch (Exception ex2)
+            {
+                MessageBox.Show("Error: " + ex2.Message);
+            }
+        }
+
+        private static void CreateLetterAndNumberDirectories(string pathInfo)
+        {
+            try
+            {
+                string dir = pathInfo + Path.DirectorySeparatorChar + "0-9";
+                DirectoryInfo dirInfo = new DirectoryInfo(dir);
+                if (!dirInfo.Exists)
+                {
+                    Directory.CreateDirectory(dir);
+                }
+                for (char letter = 'A'; letter <= 'Z'; letter++)
+                {
+                    dir = pathInfo + Path.DirectorySeparatorChar + letter.ToString();
+                    dirInfo = new DirectoryInfo(dir);
+                    if (!dirInfo.Exists)
+                    {
+                        Directory.CreateDirectory(dir);
+                    }
+                    Directory.CreateDirectory(dir);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
             }
         }
 
