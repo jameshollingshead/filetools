@@ -49,29 +49,15 @@ namespace FileTools
                 driveType = GetDriveType(d);
                 n.ImageIndex = driveType;
                 n.SelectedImageIndex = driveType;
-                
-                AddPlaceholderForSubFolders(d, n);
+
+                AddPlaceholderForSubFolders(d.Name.ToString(), n);
 
                 fileTree.Nodes[0].Nodes.Add(n);
 
             }
         }
 
-        private static void AddPlaceholderForSubFolders(DriveInfo d, TreeNode n)
-        {
-            DirectoryInfo folder = new DirectoryInfo(d.Name.ToString());
 
-            if (folder.Exists)
-            {
-                //If the drive has sub folders, add a placeholder node so you can expand the folder
-                //string[] subFolders = Directory.GetDirectories(drives[i]);
-                string[] subFolders = Directory.GetDirectories(d.Name.ToString());
-                if (subFolders.Length > 0)
-                {
-                    n.Nodes.Add("PLACEHOLDER");
-                }
-            }
-        }
 
         private void CreateRootNode()
         {
@@ -117,28 +103,8 @@ namespace FileTools
         
         private void fileTree_BeforeExpand(object sender, TreeViewCancelEventArgs e)
         {
-            string pathInfo;
-            
-            //Bugfix added July 11, 2013
-            //Make absolutely certain that the selected node has sub directories.
-            //If all of the sub directories of selected node have been deleted or removed, remove placeholder node
-            //And set it so program doesn't try to show sub directories that no longer exist, causing an error.
-            DirectoryInfo selectedFolder = new DirectoryInfo(e.Node.Text.ToString());
-            if(selectedFolder.Exists && (Directory.GetDirectories(e.Node.Text.ToString()).Length <= 0))
-            {
-                pathInfo = null;
-                e.Node.Nodes.Clear();
-            }
-            //clear out the placeholder node if expanding node is not the tree's root
-            else if (e.Node.Text.ToString() != fileTree.Nodes[0].Text.ToString())
-            {
-                pathInfo = e.Node.Tag.ToString();
-                e.Node.Nodes.Clear();
-            }
-            else
-            {
-                pathInfo = null;
-            }
+
+            string pathInfo = DetermineFolderExpansionBehavior(e);
 
             if (pathInfo != null)
             {
@@ -167,24 +133,8 @@ namespace FileTools
                             subNode.ImageIndex = (int)folderTypes.FolderClosed;
                             subNode.SelectedImageIndex = (int)folderTypes.FolderOpen;
 
-                            DirectoryInfo folder = new DirectoryInfo(newSubs[k]);
-                            if (folder.Exists)
-                            {
-                                try
-                                {
-                                    string[] subFolders = Directory.GetDirectories(newSubs[k]);
-                                    if (subFolders.Length > 0)
-                                    {
-                                        subNode.Nodes.Add("PLACEHOLDER");
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                    MessageBox.Show("Error: " + ex.Message);
-                                }
-                            }
+                            AddPlaceholderForSubFolders(newSubs[k], subNode);
 
-                            
                             e.Node.Nodes.Add(subNode);
                         }
 
@@ -192,6 +142,37 @@ namespace FileTools
                 }
 
             }
+        }
+
+        private string DetermineFolderExpansionBehavior(TreeViewCancelEventArgs e)
+        {
+
+
+            string pathInfo;
+            DirectoryInfo selectedFolder = new DirectoryInfo(e.Node.Text.ToString());
+
+            //Bugfix added July 11, 2013
+            //Make absolutely certain that the selected node has sub directories.
+            //If all of the sub directories of selected node have been deleted or removed, remove placeholder node
+            //And set it so program doesn't try to show sub directories that no longer exist, causing an error.
+            if (selectedFolder.Exists && (Directory.GetDirectories(e.Node.Text.ToString()).Length <= 0))
+            {
+                pathInfo = null;
+                e.Node.Nodes.Clear();
+            }
+            //clear out the placeholder node if expanding node is not the tree's root
+            else if (e.Node.Text.ToString() != fileTree.Nodes[0].Text.ToString())
+            {
+                pathInfo = e.Node.Tag.ToString();
+                e.Node.Nodes.Clear();
+            }
+            //If the folder is the root "My Computer" folder, we don't want to do anything to the sub nodes
+            else
+            {
+                pathInfo = null;
+            }
+
+            return pathInfo;
         }
 
         private void sortBtn_Click(object sender, EventArgs e)
@@ -329,7 +310,22 @@ namespace FileTools
             about.Show();
         }
 
-        
+             
+        private static void AddPlaceholderForSubFolders(string currentFolder, TreeNode n)
+        {
+            DirectoryInfo folder = new DirectoryInfo(currentFolder);
+
+            if (folder.Exists)
+            {
+                //If the drive has sub folders, add a placeholder node so you can expand the folder
+                //string[] subFolders = Directory.GetDirectories(drives[i]);
+                string[] subFolders = Directory.GetDirectories(currentFolder);
+                if (subFolders.Length > 0)
+                {
+                    n.Nodes.Add("PLACEHOLDER");
+                }
+            }
+        }
 
     }
 }
