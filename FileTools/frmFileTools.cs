@@ -31,81 +31,13 @@ namespace FileTools
             fileTree.Nodes[0].Expand();
         }
 
-        private void AddDrivesToTree()
-        {
-            int driveType;
-
-            //Add logical Drives to the tree
-            DriveInfo[] drives = DriveInfo.GetDrives();
-            foreach (DriveInfo d in drives)
-            {
-
-                TreeNode n = new TreeNode();
-                n.Name = d.Name.ToString();
-                n.Text = d.Name.ToString();
-                n.Tag = d.Name.ToString();
-
-                //Determine type of all attached drives and assign the appropriate images to the tree nodes
-                driveType = GetDriveType(d);
-                n.ImageIndex = driveType;
-                n.SelectedImageIndex = driveType;
-
-                AddPlaceholderForSubFolders(d.Name.ToString(), n);
-
-                fileTree.Nodes[0].Nodes.Add(n);
-
-            }
-        }
-
-
-
-        private void CreateRootNode()
-        {
-            //Create root node (MyComputer) for file tree and add it to the file tree
-            TreeNode rootNode = new TreeNode();
-            rootNode.Name = "rootNode";
-            rootNode.Text = "My Computer";
-            rootNode.ImageIndex = (int)folderTypes.MyComputer;
-            rootNode.SelectedImageIndex = (int)folderTypes.MyComputer;
-            this.fileTree.Nodes.Add(rootNode);
-        }
-
-        private static int GetDriveType(DriveInfo d)
-        {
-
-            int driveType;
-            
-            //Determine drive type and add appropriate icon to tree node
-            if (d.DriveType == DriveType.Fixed)
-            {
-                driveType = (int)folderTypes.FixedDrive;                
-            }
-            else if (d.DriveType == DriveType.CDRom)
-            {
-                driveType = (int)folderTypes.CDRom;
-            }
-            else if (d.DriveType == DriveType.Removable)
-            {
-                driveType = (int)folderTypes.Removeable;
-            }
-            else if (d.DriveType == DriveType.Network)
-            {
-                driveType = (int)folderTypes.Network;
-            }
-            else
-            {
-                driveType = (int)folderTypes.Other;
-            }
-
-            return driveType;
-        }
-
-        
+    
         private void fileTree_BeforeExpand(object sender, TreeViewCancelEventArgs e)
         {
 
             string pathInfo = DetermineFolderExpansionBehavior(e);
 
+            //If the folder has subfolders and is not the root "My computer" node of the tree, get the sub folders
             if (pathInfo != null)
             {
 
@@ -144,37 +76,6 @@ namespace FileTools
             }
         }
 
-        private string DetermineFolderExpansionBehavior(TreeViewCancelEventArgs e)
-        {
-
-
-            string pathInfo;
-            DirectoryInfo selectedFolder = new DirectoryInfo(e.Node.Text.ToString());
-
-            //Bugfix added July 11, 2013
-            //Make absolutely certain that the selected node has sub directories.
-            //If all of the sub directories of selected node have been deleted or removed, remove placeholder node
-            //And set it so program doesn't try to show sub directories that no longer exist, causing an error.
-            if (selectedFolder.Exists && (Directory.GetDirectories(e.Node.Text.ToString()).Length <= 0))
-            {
-                pathInfo = null;
-                e.Node.Nodes.Clear();
-            }
-            //clear out the placeholder node if expanding node is not the tree's root
-            else if (e.Node.Text.ToString() != fileTree.Nodes[0].Text.ToString())
-            {
-                pathInfo = e.Node.Tag.ToString();
-                e.Node.Nodes.Clear();
-            }
-            //If the folder is the root "My Computer" folder, we don't want to do anything to the sub nodes
-            else
-            {
-                pathInfo = null;
-            }
-
-            return pathInfo;
-        }
-
         private void sortBtn_Click(object sender, EventArgs e)
         {
             string pathInfo = fileTree.SelectedNode.Tag.ToString();
@@ -191,6 +92,142 @@ namespace FileTools
                 //Move the files into the appropriate directory
                 SortFilesIntoDirectoriesByFirstCharacter(pathInfo);
             }
+        }
+
+        private void renamerBtn_Click(object sender, EventArgs e)
+        {
+            string pathInfo = fileTree.SelectedNode.Tag.ToString();
+
+            try
+            {
+                string[] fileList = Directory.GetFiles(pathInfo);
+
+                if (HelperFuncs.ConfirmMove(pathInfo))
+                {
+                    for (int i = 0; i < fileList.Length; i++)
+                    {
+                        string destFile;
+                        string[] srcChkFile = fileList[i].Split(Path.DirectorySeparatorChar);
+                        if (srcChkFile[srcChkFile.Length - 1].Contains(findTxt.Text.ToString()))
+                        {
+                            destFile = srcChkFile[srcChkFile.Length - 1].Replace(findTxt.Text.ToString(), replaceTxt.Text.ToString());
+                            HelperFuncs.MoveFiles(fileList[i], pathInfo, destFile);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+        }
+
+        private void prependBtn_Click(object sender, EventArgs e)
+        {
+            string pathInfo = fileTree.SelectedNode.Tag.ToString();
+
+            try
+            {
+
+                string[] fileList = Directory.GetFiles(pathInfo);
+
+                if (HelperFuncs.ConfirmMove(pathInfo))
+                {
+                    for (int i = 0; i < fileList.Length; i++)
+                    {
+
+                        string destFile;
+                        string[] fileToRename = fileList[i].Split(Path.DirectorySeparatorChar);
+
+                        destFile = prependTxt.Text.ToString() + fileToRename[fileToRename.Length - 1].ToString();
+
+                        HelperFuncs.MoveFiles(fileList[i], pathInfo, destFile);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmAbout about = new frmAbout();
+            about.Show();
+        }
+
+
+        private void AddDrivesToTree()
+        {
+            int driveType;
+
+            //Add logical Drives to the tree
+            DriveInfo[] drives = DriveInfo.GetDrives();
+            foreach (DriveInfo d in drives)
+            {
+
+                TreeNode n = new TreeNode();
+                n.Name = d.Name.ToString();
+                n.Text = d.Name.ToString();
+                n.Tag = d.Name.ToString();
+
+                //Determine type of all attached drives and assign the appropriate images to the tree nodes
+                driveType = GetDriveType(d);
+                n.ImageIndex = driveType;
+                n.SelectedImageIndex = driveType;
+
+                AddPlaceholderForSubFolders(d.Name.ToString(), n);
+
+                fileTree.Nodes[0].Nodes.Add(n);
+
+            }
+        }
+
+        private void CreateRootNode()
+        {
+            //Create root node (MyComputer) for file tree and add it to the file tree
+            TreeNode rootNode = new TreeNode();
+            rootNode.Name = "rootNode";
+            rootNode.Text = "My Computer";
+            rootNode.ImageIndex = (int)folderTypes.MyComputer;
+            rootNode.SelectedImageIndex = (int)folderTypes.MyComputer;
+            this.fileTree.Nodes.Add(rootNode);
+        }
+
+        private static int GetDriveType(DriveInfo d)
+        {
+
+            int driveType;
+
+            //Determine drive type and add appropriate icon to tree node
+            if (d.DriveType == DriveType.Fixed)
+            {
+                driveType = (int)folderTypes.FixedDrive;
+            }
+            else if (d.DriveType == DriveType.CDRom)
+            {
+                driveType = (int)folderTypes.CDRom;
+            }
+            else if (d.DriveType == DriveType.Removable)
+            {
+                driveType = (int)folderTypes.Removeable;
+            }
+            else if (d.DriveType == DriveType.Network)
+            {
+                driveType = (int)folderTypes.Network;
+            }
+            else
+            {
+                driveType = (int)folderTypes.Other;
+            }
+
+            return driveType;
         }
 
         private static void SortFilesIntoDirectoriesByFirstCharacter(string pathInfo)
@@ -241,75 +278,36 @@ namespace FileTools
             }
         }
 
-        private void renamerBtn_Click(object sender, EventArgs e)
+        private string DetermineFolderExpansionBehavior(TreeViewCancelEventArgs e)
         {
-            string pathInfo = fileTree.SelectedNode.Tag.ToString();
 
-            try
+
+            string pathInfo;
+            DirectoryInfo selectedFolder = new DirectoryInfo(e.Node.Text.ToString());
+
+            //Bugfix added July 11, 2013
+            //Make absolutely certain that the selected node has sub directories.
+            //If all of the sub directories of selected node have been deleted or removed, remove placeholder node
+            //And set it so program doesn't try to show sub directories that no longer exist, causing an error.
+            if (selectedFolder.Exists && (Directory.GetDirectories(e.Node.Text.ToString()).Length <= 0))
             {
-                string[] fileList = Directory.GetFiles(pathInfo);
-
-                if (HelperFuncs.ConfirmMove(pathInfo))
-                {
-                    for (int i = 0; i < fileList.Length; i++)
-                    {
-                        string destFile;
-                        string[] srcChkFile = fileList[i].Split(Path.DirectorySeparatorChar);
-                        if (srcChkFile[srcChkFile.Length - 1].Contains(findTxt.Text.ToString()))
-                        {
-                            destFile = srcChkFile[srcChkFile.Length - 1].Replace(findTxt.Text.ToString(), replaceTxt.Text.ToString());
-                            HelperFuncs.MoveFiles(fileList[i], pathInfo, destFile);
-                        }
-                    }
-                }
+                pathInfo = null;
+                e.Node.Nodes.Clear();
             }
-            catch (Exception ex)
+            //clear out the placeholder node if expanding node is not the tree's root
+            else if (e.Node.Text.ToString() != fileTree.Nodes[0].Text.ToString())
             {
-                MessageBox.Show("Error: " + ex.Message);
+                pathInfo = e.Node.Tag.ToString();
+                e.Node.Nodes.Clear();
             }
-        }
-
-
-        private void prependBtn_Click(object sender, EventArgs e)
-        {
-            string pathInfo = fileTree.SelectedNode.Tag.ToString();
-
-            try
+            //If the folder is the root "My Computer" folder, we don't want to do anything to the sub nodes
+            else
             {
-
-                string[] fileList = Directory.GetFiles(pathInfo);
-
-                if (HelperFuncs.ConfirmMove(pathInfo))
-                {
-                    for (int i = 0; i < fileList.Length; i++)
-                    {
-
-                        string destFile;
-                        string[] fileToRename = fileList[i].Split(Path.DirectorySeparatorChar);
-
-                        destFile = prependTxt.Text.ToString() + fileToRename[fileToRename.Length - 1].ToString();
-
-                        HelperFuncs.MoveFiles(fileList[i], pathInfo, destFile);
-                    }
-                }
+                pathInfo = null;
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error: " + ex.Message);
-            }
-        }
 
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            this.Close();
+            return pathInfo;
         }
-
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            frmAbout about = new frmAbout();
-            about.Show();
-        }
-
              
         private static void AddPlaceholderForSubFolders(string currentFolder, TreeNode n)
         {
