@@ -119,8 +119,18 @@ namespace FileTools
         {
             string pathInfo;
             
+            //Bugfix added July 11, 2013
+            //Make absolutely certain that the selected node has sub directories.
+            //If all of the sub directories of selected node have been deleted or removed, remove placeholder node
+            //And set it so program doesn't try to show sub directories that no longer exist, causing an error.
+            DirectoryInfo selectedFolder = new DirectoryInfo(e.Node.Text.ToString());
+            if(selectedFolder.Exists && (Directory.GetDirectories(e.Node.Text.ToString()).Length <= 0))
+            {
+                pathInfo = null;
+                e.Node.Nodes.Clear();
+            }
             //clear out the placeholder node if expanding node is not the tree's root
-            if (e.Node.Text.ToString() != fileTree.Nodes[0].Text.ToString())
+            else if (e.Node.Text.ToString() != fileTree.Nodes[0].Text.ToString())
             {
                 pathInfo = e.Node.Tag.ToString();
                 e.Node.Nodes.Clear();
