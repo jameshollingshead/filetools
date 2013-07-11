@@ -18,7 +18,7 @@ namespace FileTools
 {
     public partial class FileTools : Form
     {
-        enum driveTypes {FixedDrive, CDRom, Removeable, FolderClosed, Network, Other, MyComputer, FolderOpen};
+        enum folderTypes {FixedDrive, CDRom, Removeable, FolderClosed, Network, Other, MyComputer, FolderOpen};
 
         public FileTools()
         {
@@ -26,13 +26,20 @@ namespace FileTools
 
             CreateRootNode();
 
+            AddDrivesToTree();
+
+            fileTree.Nodes[0].Expand();
+        }
+
+        private void AddDrivesToTree()
+        {
             int driveType;
 
             //Add logical Drives to the tree
             DriveInfo[] drives = DriveInfo.GetDrives();
-            foreach(DriveInfo d in drives)
+            foreach (DriveInfo d in drives)
             {
-                
+
                 TreeNode n = new TreeNode();
                 n.Name = d.Name.ToString();
                 n.Text = d.Name.ToString();
@@ -42,26 +49,28 @@ namespace FileTools
                 driveType = GetDriveType(d);
                 n.ImageIndex = driveType;
                 n.SelectedImageIndex = driveType;
-
                 
-                DirectoryInfo folder = new DirectoryInfo(d.Name.ToString());
-
-                if (folder.Exists)
-                {
-                    //If the drive has sub folders, add a placeholder node so you can expand the folder
-                    //string[] subFolders = Directory.GetDirectories(drives[i]);
-                    string[] subFolders = Directory.GetDirectories(d.Name.ToString());
-                    if (subFolders.Length > 0)
-                    {
-                        n.Nodes.Add("PLACEHOLDER");
-                    }
-                }
+                AddPlaceholderForSubFolders(d, n);
 
                 fileTree.Nodes[0].Nodes.Add(n);
 
             }
+        }
 
-            fileTree.Nodes[0].Expand();
+        private static void AddPlaceholderForSubFolders(DriveInfo d, TreeNode n)
+        {
+            DirectoryInfo folder = new DirectoryInfo(d.Name.ToString());
+
+            if (folder.Exists)
+            {
+                //If the drive has sub folders, add a placeholder node so you can expand the folder
+                //string[] subFolders = Directory.GetDirectories(drives[i]);
+                string[] subFolders = Directory.GetDirectories(d.Name.ToString());
+                if (subFolders.Length > 0)
+                {
+                    n.Nodes.Add("PLACEHOLDER");
+                }
+            }
         }
 
         private void CreateRootNode()
@@ -70,8 +79,8 @@ namespace FileTools
             TreeNode rootNode = new TreeNode();
             rootNode.Name = "rootNode";
             rootNode.Text = "My Computer";
-            rootNode.ImageIndex = (int)driveTypes.MyComputer;
-            rootNode.SelectedImageIndex = (int)driveTypes.MyComputer;
+            rootNode.ImageIndex = (int)folderTypes.MyComputer;
+            rootNode.SelectedImageIndex = (int)folderTypes.MyComputer;
             this.fileTree.Nodes.Add(rootNode);
         }
 
@@ -83,23 +92,23 @@ namespace FileTools
             //Determine drive type and add appropriate icon to tree node
             if (d.DriveType == DriveType.Fixed)
             {
-                driveType = (int)driveTypes.FixedDrive;                
+                driveType = (int)folderTypes.FixedDrive;                
             }
             else if (d.DriveType == DriveType.CDRom)
             {
-                driveType = (int)driveTypes.CDRom;
+                driveType = (int)folderTypes.CDRom;
             }
             else if (d.DriveType == DriveType.Removable)
             {
-                driveType = (int)driveTypes.Removeable;
+                driveType = (int)folderTypes.Removeable;
             }
             else if (d.DriveType == DriveType.Network)
             {
-                driveType = (int)driveTypes.Network;
+                driveType = (int)folderTypes.Network;
             }
             else
             {
-                driveType = (int)driveTypes.Other;
+                driveType = (int)folderTypes.Other;
             }
 
             return driveType;
@@ -145,8 +154,8 @@ namespace FileTools
                             string[] tokenPath = newSubs[k].Split(Path.DirectorySeparatorChar);
                             subNode.Text = tokenPath[tokenPath.Length-1];
                             subNode.Tag = newSubs[k];
-                            subNode.ImageIndex = (int)driveTypes.FolderClosed;
-                            subNode.SelectedImageIndex = (int)driveTypes.FolderOpen;
+                            subNode.ImageIndex = (int)folderTypes.FolderClosed;
+                            subNode.SelectedImageIndex = (int)folderTypes.FolderOpen;
 
                             DirectoryInfo folder = new DirectoryInfo(newSubs[k]);
                             if (folder.Exists)
