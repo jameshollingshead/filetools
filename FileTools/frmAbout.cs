@@ -110,5 +110,10 @@ namespace FileTools
         {
             System.Diagnostics.Process.Start("IExplore", "http://www.jameshollingshead.com");
         }
+
+        private void frmAbout_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
